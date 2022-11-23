@@ -95,6 +95,7 @@ spec:
           title: Table name
           type: string
           description: Name of the table that you want to create inside the Snowflake Schema
+          default: output_table
         database:
           title: Database
           type: string
