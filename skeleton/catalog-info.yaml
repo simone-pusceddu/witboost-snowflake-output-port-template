@@ -66,6 +66,7 @@ spec:
     sampleData: {}
     semanticLinking: []
     specific:
-      tableName: ${{ values.tableName }}
       database: ${{ values.database }}
       schema: ${{ values.schema }}
+      viewName: ${{ values.viewName }}
+      tableName: ${{ values.tableName }}
