@@ -90,12 +90,8 @@ spec:
     - title: Provide Output port deployment information
       required:
         - tableName
+        - viewName
       properties:
-        tableName:
-          title: Table name
-          type: string
-          description: Name of the table that you want to create inside the Snowflake Schema
-          default: output_table
         database:
           title: Database
           type: string
@@ -104,6 +100,16 @@ spec:
           title: Schema
           type: string
           description: Name of the Schema inside a Snowflake Database. If not provided, default value (In this case, dpname_dpversion) would be assigned during the creation.
+        viewName:
+          title: View name
+          type: string
+          description: Name of the view that will be created inside the Snowflake Schema
+          default: output_port_view
+        tableName:
+          title: Table name
+          type: string
+          description: Name of the table used as source to create the view on top of it
+          default: GOOGLE_COVID_DATASET
 
     - title: Choose a location
       required:
@@ -138,9 +144,10 @@ spec:
           identifier: '${{ parameters.identifier }}'
           developmentGroup: '${{ parameters.developmentGroup }}'
           dependsOn: '${{ parameters.dependsOn }}'
-          tableName: '${{parameters.tableName}}'
           database: '${{ parameters.database }}'
           schema: '${{ parameters.schema }}'
+          viewName: '${{parameters.viewName}}'
+          tableName: '${{parameters.tableName}}'
           creationDate: '${{ parameters.creationDate }}'
           useCaseTemplateId: urn:dmb:utm:snowflake-outputport-template:0.0.0
           infrastructureTemplateId: urn:dmb:itm:snowflake-outputport-provisioner:0
