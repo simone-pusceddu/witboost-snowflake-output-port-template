@@ -33,33 +33,27 @@ spec:
     dataContract:
       schema:
         - name: date
-          dataType: TEXT
+          dataType: DATE
           constraint: NO CONSTRAINT
         - name: location_key
           dataType: TEXT
           constraint: NO CONSTRAINT
-        - name: new_confirmed
+        - name: new_persons_vaccinated
           dataType: NUMBER
           constraint: NO CONSTRAINT
-        - name: new_deceased
+        - name: new_persons_fully_vaccinated
           dataType: NUMBER
           constraint: NO CONSTRAINT
-        - name: new_recovered
+        - name: new_vaccine_doses_administered
           dataType: NUMBER
           constraint: NO CONSTRAINT
-        - name: new_tested
+        - name: cumulative_persons_vaccinated
           dataType: NUMBER
           constraint: NO CONSTRAINT
-        - name: cumulative_confirmed
+        - name: cumulative_persons_fully_vaccinated
           dataType: NUMBER
           constraint: NO CONSTRAINT
-        - name: cumulative_deceased
-          dataType: NUMBER
-          constraint: NO CONSTRAINT
-        - name: cumulative_recovered
-          dataType: NUMBER
-          constraint: NO CONSTRAINT
-        - name: cumulative_tested
+        - name: cumulative_vaccine_doses_administered
           dataType: NUMBER
           constraint: NO CONSTRAINT
     tags: []
