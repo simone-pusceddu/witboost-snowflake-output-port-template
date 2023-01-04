@@ -8,7 +8,6 @@ metadata:
     icon: https://avatars.githubusercontent.com/u/6453780?s=280&v=4
   tags:
     - snowflake
-    - workload
     - output-port
 spec:
   owner: agilelab

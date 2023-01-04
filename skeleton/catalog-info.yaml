@@ -10,7 +10,7 @@ metadata:
     - outputport
     - snowflake
 spec:
-  type: workload
+  type: outputport
   lifecycle: experimental
   owner: ${{ values.developmentGroup | dump }}
   system: ${{ values.dataproduct | dump }}
