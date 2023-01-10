@@ -94,21 +94,21 @@ spec:
         database:
           title: Database
           type: string
-          description: Name of the Database in the Snowflake. If not provided, default value (In this case, domain name) would be assigned during the creation.
+          description: Name of the Database in Snowflake. If not provided, the default value (In this case, domain name) will be assigned during the creation.
         schema:
           title: Schema
           type: string
-          description: Name of the Schema inside a Snowflake Database. If not provided, default value (In this case, dpname_dpversion) would be assigned during the creation.
-        viewName:
-          title: View name
-          type: string
-          description: Name of the view that will be created inside the Snowflake Schema
-          default: output_port_view
+          description: Name of the Schema inside a Snowflake database. If not provided, the default value (In this case, dpname_dpversion) will be assigned during the creation.
         tableName:
           title: Table name
           type: string
           description: Name of the table used as source to create the view on top of it
-          default: GOOGLE_COVID_DATASET
+          default: vaccinations_clean
+        viewName:
+          title: View name
+          type: string
+          description: Name of the view that will be created inside the Snowflake Schema
+          default: vaccinations_clean_view
 
     - title: Choose a location
       required:
