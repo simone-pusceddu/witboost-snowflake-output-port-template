@@ -37,7 +37,7 @@ spec:
           constraint: NO CONSTRAINT
         - name: location_key
           dataType: TEXT
-          constraint: NO CONSTRAINT
+          constraint: PRIMARY KEY
         - name: new_persons_vaccinated
           dataType: NUMBER
           constraint: NO CONSTRAINT
