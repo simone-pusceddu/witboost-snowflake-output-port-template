@@ -4,7 +4,7 @@ metadata:
   name: ${{ values.identifier }}
   description: ${{ values.description | dump }}
   annotations:
-    gitlab.com/project-slug: ${{ values.destination.owner + "/" + values.destination.repo }}
+    gitlab.com/project-slug: 'AgileDMBSandbox/${{orgname}}/mesh.repository/${{ values.domain | replace(r/domain:| |-/, "") }}/${{ values.dataproduct.split(".")[1] | replace(r/ |-/g, "") }}/${{ values.name.split(" ") | join("") | lower }}'
     backstage.io/techdocs-ref: dir:.
   tags:
     - outputport
@@ -31,30 +31,18 @@ spec:
     creationDate: ${{ values.creationDate }}
     startDate: ${{ values.creationDate }}
     dataContract:
-      schema:
-        - name: date
-          dataType: DATE
-        - name: location_key
-          dataType: TEXT
-          constraint: PRIMARY_KEY
-        - name: new_persons_vaccinated
-          dataType: NUMBER
-        - name: new_persons_fully_vaccinated
-          dataType: NUMBER
-        - name: new_vaccine_doses_administered
-          dataType: NUMBER
-        - name: cumulative_persons_vaccinated
-          dataType: NUMBER
-        - name: cumulative_persons_fully_vaccinated
-          dataType: NUMBER
-        - name: cumulative_vaccine_doses_administered
-          dataType: NUMBER
+      schema: {% if values.schemaColumns | length > 0 %}{% for i in values.schemaColumns %}
+        - name: ${{ i.name }}
+          dataType: ${{ i.dataType }}{% if i.constraint is defined %}
+          constraint: ${{ i.constraint }}{% endif %}{% if i.dataLength is defined %}
+          dataLength: ${{ i.dataLength }}{% endif %}{% if i.precision is defined %}
+          precision: ${{ i.precision }}{% endif %}{% if i.scale is defined %}
+          scale: ${{ i.scale }}{% endif %}{% endfor %}{% else %}[]{% endif %}
     tags: []
     sampleData: {}
     semanticLinking: []
     specific:
       viewName: ${{ values.viewName }}
       tableName: ${{ values.tableName }}
-      database: ${{ values.database | default(values.domain, true) | replace(r/domain:| |-/, "") | upper | dump}}
-      schema: ${{ (values.schema | default(values.dataproduct.split(".")[1], true) | replace(r/ |-/, "") + "_" + values.identifier.split(".")[2]) | upper | dump }}
-
+      database: ${{ values.database | default(values.domain, true) | replace(r/domain:| |-/, "") | upper | dump }}
+      schema: ${{ (values.schema | default(values.dataproduct.split(".")[1], true) | replace(r/ |-/g, "") + "_" + values.identifier.split(".")[2]) | upper | dump }}

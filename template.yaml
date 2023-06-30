@@ -20,6 +20,7 @@ spec:
         - domain
         - dataproduct
         - description
+        - dependsOn
       properties:
         name:
           title: Name
@@ -81,12 +82,14 @@ spec:
           items:
             type: string
             ui:field: EntityComponentsPicker
+            ui:componentsFilter: storage
             ui:fieldName: dataproduct
             ui:options:
               allowArbitraryValues: false
-          description: An Output Port could depend on other output ports or storage areas
+          description: An Output Port could depend on other output ports or storage areas of the same dataproduct
 
-    - title: Provide Output port deployment information
+
+    - title: Provide Output Port deployment information
       required:
         - tableName
         - viewName
@@ -110,22 +113,46 @@ spec:
           description: Name of the view that will be created inside the Snowflake Schema
           default: vaccinations_clean_view
 
-    - title: Choose a location
-      required:
-        - repoUrl
+
+    - title: Provide information about Schema
       properties:
-        repoUrl:
-          title: Repository Location
-          type: string
-          ui:field: RepoUrlPicker
-          ui:options:
-            allowedHosts:
-              - gitlab.com
-        rootDirectory:
-          title: Root Directory
-          type: string
-          description: Path that will be used as the repository root for this component
-          default: .
+        schemaColumns:
+          title: Schema Columns
+          type: array
+          items:
+            type: object
+            required: [name, dataType]
+            properties:
+              name:
+                type: string
+                title: Column Name
+              dataType:
+                type: string
+                default: TEXT
+                title: Column Data Type
+                enum:
+                  - TEXT
+                  - NUMBER
+                  - DATE
+                  - BOOLEAN
+              constraint:
+                type: string
+                title: Constraint
+                enum:
+                  - PRIMARY_KEY
+                  - NOT_NULL
+                  - UNIQUE
+                  - NO CONSTRAINT
+              dataLength:
+                type: integer
+                title: Column DataLength
+              precision:
+                type: integer
+                title: Column Precision
+              scale:
+                type: integer
+                title: Column Scale
+
 
   steps:
     - id: template
@@ -133,7 +160,7 @@ spec:
       action: fetch:template
       input:
         url: ./skeleton
-        targetPath: '${{ parameters.rootDirectory }}'
+        targetPath: '.'
         values:
           name: '${{ parameters.name }}'
           fullyQualifiedName: '${{ parameters.fullyQualifiedName }}'
@@ -147,10 +174,12 @@ spec:
           schema: '${{ parameters.schema }}'
           viewName: '${{parameters.viewName}}'
           tableName: '${{parameters.tableName}}'
+          schemaColumns: '${{ parameters.schemaColumns }}'
           creationDate: '${{ parameters.creationDate }}'
           useCaseTemplateId: urn:dmb:utm:snowflake-outputport-template:0.0.0
           infrastructureTemplateId: urn:dmb:itm:snowflake-outputport-provisioner:0
-          destination: '${{ parameters.repoUrl | parseRepoUrl }}'
+          repoUrl: 'gitlab.com?owner=AgileDMBSandbox%2F${{orgname}}%2Fmesh.repository%2F${{ parameters.domain | replace(r/domain:| |-/, "") }}%2F${{ parameters.dataproduct.split(".")[1] | replace(r/ |-/g, "") }}&repo=${{ parameters.name.split(" ") | join("") | lower }}'
+          rootDirectory: '.'
           displayName: '${{ parameters.displayName }}'
           artifact_id: '${{ parameters.name }}'
           useCaseTemplateVersion: 0.0.0
@@ -161,8 +190,8 @@ spec:
       input:
         allowedHosts: ['gitlab.com']
         description: 'This is ${{ parameters.name }}'
-        repoUrl: '${{ parameters.repoUrl }}'
-        rootDirectory: '${{ parameters.rootDirectory }}'
+        repoUrl: 'gitlab.com?owner=AgileDMBSandbox%2F${{orgname}}%2Fmesh.repository%2F${{ parameters.domain | replace(r/domain:| |-/, "") }}%2F${{ parameters.dataproduct.split(".")[1] | replace(r/ |-/g, "") }}&repo=${{ parameters.name.split(" ") | join("") | lower }}'
+        rootDirectory: '.'
         dataproduct: '${{ parameters.dataproduct }}'
 
     - id: register
@@ -170,7 +199,7 @@ spec:
       action: catalog:register
       input:
         repoContentsUrl: '${{ steps.publish.output.repoContentsUrl }}'
-        catalogInfoPath: '/${{ parameters.rootDirectory }}/catalog-info.yaml'
+        catalogInfoPath: '/catalog-info.yaml'
 
   output:
     links:
