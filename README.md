@@ -1,14 +1,53 @@
-# Snowflake Output Port template
+<p align="center">
+    <a href="https://www.agilelab.it/witboost">
+        <img src="docs/img/witboost_logo.svg" alt="witboost" width=600 >
+    </a>
+</p>
+
+Designed by [Agile Lab](https://www.agilelab.it/), witboost is a versatile platform that addresses a wide range of sophisticated data engineering challenges. It enables businesses to discover, enhance, and productize their data, fostering the creation of automated data platforms that adhere to the highest standards of data governance. Want to know more about witboost? Check it out [here](https://www.agilelab.it/witboost) or [contact us!](https://www.agilelab.it/contacts)
+
+This repository is part of our [Open Source projects](https://github.com/agile-lab-dev/witboost-open-source-projects) meant to showcase witboost's integration capabilities and provide a "batteries-included" product.
+
+# Snowflake Output Port Template
+
+- [Overview](#overview)
+- [Usage](#usage)
+
+## Overview
 
 Use this template to automatically create an Output Port based on a Snowflake instance.
 
-## Using the template
+Refer to the [witboost Open Source projects repository](https://github.com/agile-lab-dev/witboost-open-source-projects) for information on the Specific Provisioner that can be used to deploy components created with this Template.
+
+### What's a Template?
+
+A Template is a tool that helps create components inside a Data Mesh. Templates help establish a standard across the organization. This standard leads to easier understanding, management and maintenance of components. Templates provide a predefined structure so that developers don't have to start from scratch each time, which leads to faster development and allows them to focus on other aspects, such as testing and business logic.
+
+For more information, please refer to the [official documentation](https://docs.witboost.agilelab.it/docs/p1_user/p6_advanced/p6_1_templates/#getting-started).
+
+### What's an Output Port?
+
+An Output Port refers to the interface that a Data Product uses to provide data to other components or systems within the organization. The methods of data sharing can range from APIs to file exports and database links.
+
+### Snowflake
+
+Snowflake is a cloud based data warehousing platform that simplifies the management and analysis of massive amounts of data. Its architecture separates computation and storage resources, allowing them to scale independently according to demand. The key features include:
+
+- Storage and Compute Separation: Unlike many traditional databases, Snowflake separates compute and storage resources, allowing each to scale independently. This ensures you pay only for the resources you use.
+- Multi-Cloud Capability: Snowflake is a platform-agnostic service that can be run on major cloud providers such as AWS, GCP and Microsoft Azure.
+- Zero Management: Snowflake is offered as a fully-managed service, which means you don't have to worry about infrastructure, indexes, partitions, or tuning to maintain peak performance.
+- Security: It provides robust security features such as end-to-end encryption, multi-factor authentication, and role-based access control to ensure data privacy and protection.
+- Concurrency and Performance: Snowflake can handle large numbers of simultaneous users and queries without degrading performance.
+- Time Travel: Snowflake allows you to access historical data at any point within a specified period, which can be up to 90 days. This can be used for data recovery or analytical purposes.
+- Cloning: the clone capability allows us to quickly duplicate anything, including databases, schemas, tables, and other Snowflake objects, in almost real time.
+
+Learn more about it on the [official website](https://www.snowflake.com/en/).
+
+## Usage
 
 ### Prerequisites
 
 A Data Product should already exist in order to attach the new components to it. The component **Snowflake Storage** should exist in the Data Product.
-
----
 
 ### Component basic information
 
@@ -23,7 +62,7 @@ This section includes the basic information that any Component of Data Mesh Boos
 - Development Group: Development group of this Data Product. Don't worry to fill this field, it will be automatically filled for you.
 - Depends On: If you want your workload to depend on other components from the Data Product, you can choose this option.
 
-    > In order for the Snowflake Output Port to create view on top of the tables, we need to add Snowflake Storage component in the **dependsOn** field.
+  > In order for the Snowflake Output Port to create view on top of the tables, we need to add Snowflake Storage component in the **dependsOn** field.
 
 *Example:*
 
@@ -37,8 +76,6 @@ This section includes the basic information that any Component of Data Mesh Boos
 | ***Development Group*** | Might look something like this: *group:datameshplatform* Depends on the Data Product development group  |
 | ***dependsOn***         | urn:dmb:cmp:healthcare:vaccinationsdp:0:snowflake-vaccinations-storage                                  |
 
----
-
 ### Provide Output Port deployment information
 
 This section will tell the Output Port where to get the data from inside Snowflake
@@ -47,7 +84,6 @@ This section will tell the Output Port where to get the data from inside Snowfla
 - Schema: (Optional) Enter the name of the default schema. If not specified the value `<DP_name>_<DP_version>` will be set as default value. (The version will be rendered without the dots)
 - View name: Enter the name of the view that will be created inside the Snowflake Schema
 - Table name: Enter the name of the table used as source to create the view on top of it
-
 
 *Example:*
 
@@ -58,32 +94,6 @@ This section will tell the Output Port where to get the data from inside Snowfla
 | **Table name** | vaccinations_clean      |
 | **View name**  | vaccinations_clean_view |
 
----
-
-### Choose a location
-
-Every component needs a host where the generated code will be saved. The default is `gitlab.com`. Refer to your team to understand the structure on how to use your repository to save these components.
-
-- Host: The host where the repository will be created. By default is `gitlab.com`
-- User/Group: A group or a user that the repository belongs to, e.g. 'group/sub-group/sub-sub-group' or 'name.surname'. There are two ways of creating a new component. One way of creating it is by making a monorepo (in that way you will never change the field 'Repository' and it will always be a repository containing your data product, and you will only need to change the root directory). The second way of creating a new component is by doing it always in another repository (in that case the root directory will always be '.' and you will always change the repository field).
-- Repository: The name of the repository
-- Root Directory: The path that will be used as the repository root for this component. For monorepos this will be different for each component.
-
-*Example:*
-
-| Field name        | Example value                                  |
-|:------------------|:-----------------------------------------------|
-| ***Host***        | gitlab.com                                     |
-| **User/Group**    | MyCompany/mesh.repository/sandbox/vaccinations |
-| **Repository**    | SnowflakeVaccinationsOutputPort                |
-| **RootDirectory** | .                                              |
-
-After this the system will show you the summary of the template, and you can go back and edit or go ahead and create the Component. 
-
-After clicking on "Create" the registering of the Component will start. If no errors occurred it will go through the 3 phases (Fetching, Publishing and Registering) and will give you the links to the newly created Repository and the component in the Catalog.
-
----
-
 ### Snowflake Output port deployment information
 
 The deployment of this component will create a Snowflake View inside the specified Database and Schema. In order to cover our use-case, described in the previous sections, we are assuming that by default the view and the other Snowflake resources will be created inside the default Database Schema, following the convention explained earlier.
@@ -92,7 +102,7 @@ Then, we have several options: as explained in the previous sections we are able
 
 By default, this component will create a View on top of the Airbyte source table that will be created inside Snowflake. The View structure will follow the source table structure obviously, but the fields included will be the ones specified inside the component descriptor, listed under the `dataContract > schema` section of the `catalog-info.yaml` file. **You must change the tableName specified as source and the schema to customize your view**.
 
-#### Custom View
+### Custom View
 
 The user, as already mentioned, has also the possibility to create a custom view based on different/multiple tables. In addition, you can leverage the features offered by the View to apply **masking and row access policies**. In that case, the features explained until now will not do the job, and you may need a custom view.
 
@@ -150,3 +160,25 @@ To create a custom view, you simply need to provide the query needed to create i
 ```
 
 **Please note that when providing a customView query, the source tableName and the dataContract schema specified will be not used to create the View, but those parts must be aligned and compiled because the platform will check their consistency through policies.**
+
+## License
+
+This project is available under the [Apache License, Version 2.0](https://opensource.org/licenses/Apache-2.0); see [LICENSE](LICENSE) for full details.
+
+## About us
+
+<p align="center">
+    <a href="https://www.agilelab.it">
+        <img src="docs/img/agilelab_logo.jpg" alt="Agile Lab" width=600>
+    </a>
+</p>
+
+Agile Lab creates value for its Clients in data-intensive environments through customizable solutions to establish performance driven processes, sustainable architectures, and automated platforms driven by data governance best practices.
+
+Since 2014 we have implemented 100+ successful Elite Data Engineering initiatives and used that experience to create Witboost: a technology agnostic, modular platform, that empowers modern enterprises to discover, elevate and productize their data both in traditional environments and on fully compliant Data mesh architectures.
+
+[Contact us](https://www.agilelab.it/contacts) or follow us on:
+- [LinkedIn](https://www.linkedin.com/company/agile-lab/)
+- [Instagram](https://www.instagram.com/agilelab_official/)
+- [YouTube](https://www.youtube.com/channel/UCTWdhr7_4JmZIpZFhMdLzAA)
+- [Twitter](https://twitter.com/agile__lab)
