@@ -106,12 +106,10 @@ spec:
           title: Table name
           type: string
           description: Name of the table used as source to create the view on top of it
-          default: vaccinations_clean
         viewName:
           title: View name
           type: string
           description: Name of the view that will be created inside the Snowflake Schema
-          default: vaccinations_clean_view
 
 
     - title: Provide information about Schema
