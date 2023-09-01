@@ -96,11 +96,9 @@ This section will tell the Output Port where to get the data from inside Snowfla
 
 ### Snowflake Output port deployment information
 
-The deployment of this component will create a Snowflake View inside the specified Database and Schema. In order to cover our use-case, described in the previous sections, we are assuming that by default the view and the other Snowflake resources will be created inside the default Database Schema, following the convention explained earlier.
+The deployment of this component will create a Snowflake View inside the specified Database and Schema.
 
-Then, we have several options: as explained in the previous sections we are able to create futher multiple tables either with the Storage component or the SQL Workload (with a dedicated query inside the sql file). As a result, we can use one of these tables (or multiple tables) already provided by one of these components (or multiple components) to create our view on top of it(/them). Of course, in that case we need to specify the proper dependencies by adding the involved components inside the component DependsOn section of this component and change the input data accordingly, otherwise the Data Product deployment will not work as expected.
-
-By default, this component will create a View on top of the Airbyte source table that will be created inside Snowflake. The View structure will follow the source table structure obviously, but the fields included will be the ones specified inside the component descriptor, listed under the `dataContract > schema` section of the `catalog-info.yaml` file. **You must change the tableName specified as source and the schema to customize your view**.
+After creating this component, we have several options: we can create multiple tables either with the Storage component or the SQL Workload (with a dedicated query inside the sql file). As a result, we can use one of these tables (or multiple tables) already provided by one of these components (or multiple components) to create our view on top of it(/them). Of course, in that case we need to specify the proper dependencies by adding the involved components inside the **Depends On** section of this component and change the input data accordingly, otherwise the Data Product deployment will not work as expected.
 
 ### Custom View
 
@@ -108,7 +106,7 @@ The user, as already mentioned, has also the possibility to create a custom view
 
 To create a custom view, you simply need to provide the query needed to create it by manually editing the `catalog-info.yaml` file. In particular, you need to add it in a new `customView` field inside the `specific` section of the `catalog-info.yaml` file, as showed below:
 
-!! Be aware that we had followed certain rules for naming the specifics inside the catalog-info file (For example - Added suffixes for schemaName and appended it with majorVersion) regardless of the value being a default one (or) a custom one. During any point of time, if you have any doubts regarding these names, please refer to the catalog-info file of **Snowflake Storage** as this would be the starting point of the tutorial.
+> Be aware that we had followed certain rules for naming the specifics inside the catalog-info file (For example - Added suffixes for schemaName and appended it with majorVersion) regardless of the value being a default one (or) a custom one. During any point of time, if you have any doubts regarding these names, please refer to the catalog-info file of **Snowflake Storage** as this would be the single source of truth.
 
 ```yaml
   components:
@@ -119,37 +117,29 @@ To create a custom view, you simply need to provide the query needed to create i
       kind: outputport
       owners:
         - group:bigdata
-      infrastructureTemplateId: urn:dmb:itm:cdp-aws-s3:1.0.0
-      useCaseTemplateId: urn:dmb:utm:template-id-1:1.0.0
+      infrastructureTemplateId: urn:dmb:itm:snowflake-outputport-provisioner:0
+      useCaseTemplateId: urn:dmb:utm:snowflake-outputport-template:0.0.0
       dependsOn: [ ]
-      platform: CDP_AWS
-      technology: CDP_S3
+      platform: Snowflake
+      technology: Snowflake
       dataContract:
         schema:
           - name: date
             dataType: DATE
-            constraint: NO CONSTRAINT
           - name: location_key
             dataType: TEXT
-            constraint: NO CONSTRAINT
           - name: new_persons_vaccinated
             dataType: NUMBER
-            constraint: NO CONSTRAINT
           - name: new_persons_fully_vaccinated
             dataType: NUMBER
-            constraint: NO CONSTRAINT
           - name: new_vaccine_doses_administered
             dataType: NUMBER
-            constraint: NO CONSTRAINT
           - name: cumulative_persons_vaccinated
             dataType: NUMBER
-            constraint: NO CONSTRAINT
           - name: cumulative_persons_fully_vaccinated
             dataType: NUMBER
-            constraint: NO CONSTRAINT
           - name: cumulative_vaccine_doses_administered
             dataType: NUMBER
-            constraint: NO CONSTRAINT
       tags: [ ]
       specific:
         viewName: vaccinations_clean_view
@@ -160,6 +150,12 @@ To create a custom view, you simply need to provide the query needed to create i
 ```
 
 **Please note that when providing a customView query, the source tableName and the dataContract schema specified will be not used to create the View, but those parts must be aligned and compiled because the platform will check their consistency through policies.**
+
+### Component Testing
+
+To verify the component before deploying it along with the Data Product, the component needs to be tested against a CUE Policy defined for [Snowflake Output Port](./policies/output_port.cue). This policy needs to be defined inside the **Governance** section of the Witboost Platform.
+
+For more information, please refer to the [official documentation](https://docs.witboost.agilelab.it/docs/p1_user/p5_managing_policies/p5_1_overview).
 
 ## License
 
