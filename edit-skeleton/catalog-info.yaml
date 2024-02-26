@@ -1,35 +1,16 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: ${{ values.identifier }}
   description: ${{ values.description | dump }}
-  annotations:
-    gitlab.com/project-slug: 'AgileDMBSandbox/${{orgname}}/mesh.repository/${{ values.domain | replace(r/domain:| |-/, "") }}/${{ values.dataproduct.split(".")[1] | replace(r/ |-/g, "") }}/${{ values.name.split(" ") | join("") | lower }}'
-    backstage.io/techdocs-ref: dir:.
-  tags:
-    - outputport
-    - snowflake
 spec:
   type: outputport
   lifecycle: experimental
   owner: ${{ values.developmentGroup | dump }}
-  system: ${{ values.dataproduct | dump }}
-  domain: ${{ values.domain | dump }}
   mesh:
-    name: ${{ values.name | dump }}
     fullyQualifiedName: ${{ values.fullyQualifiedName | dump }}
     description: ${{ values.description | dump }}
-    kind: outputport
-    version: ${{ values.identifier.split(".")[2] + ".0.0" }}
-    infrastructureTemplateId: ${{ values.infrastructureTemplateId }}
-    useCaseTemplateId: ${{ values.useCaseTemplateId }}
     dependsOn: {% if values.dependsOn | length > 0 %}{% for i in values.dependsOn %}
       - ${{ i }}{% endfor %}{% else %}[]{% endif %}
-    platform: Snowflake
-    technology: Snowflake
-    outputPortType: SQL
-    creationDate: ${{ values.creationDate }}
-    startDate: ${{ values.creationDate }}
     dataContract:
       schema: {% if values.schemaColumns | length > 0 %}{% for i in values.schemaColumns %}
         - name: ${{ i.name }}
@@ -43,10 +24,8 @@ spec:
         source: Tag
         labelType: Manual
         state: Confirmed{% endfor %}{% else %}[]{% endif %}
-    sampleData: {}
-    semanticLinking: []
     specific:
-      viewName: ${{ values.viewName }}
-      tableName: ${{ values.tableName }}
       database: ${{ values.database | default(values.domain, true) | replace(r/domain:| |-/, "") | upper | dump }}
       schema: ${{ (values.schema | default(values.dataproduct.split(".")[1], true) | replace(r/ |-/g, "") + "_" + values.identifier.split(".")[2]) | upper | dump }}
+      tableName: ${{ values.tableName }}
+      viewName: ${{ values.viewName }}

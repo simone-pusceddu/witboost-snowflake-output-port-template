@@ -1,36 +1,40 @@
-apiVersion: scaffolder.backstage.io/v1beta3
-kind: Template
+# it is important to use this apiVersion
+apiVersion: witboost.com/v1
+kind: EditTemplate
 metadata:
-  name: snowflake-outputport-template.1
-  title: Snowflake Output Port
-  description: Create a Snowflake Output Port to expose data to the Data Product consumers.
-  mesh:
-    icon: https://avatars.githubusercontent.com/u/6453780?s=280&v=4
+  name: edit-snowflake-outputport-template.1
+  title: Edit Snowflake Output Port
+  description: Edit a Snowflake Output Port of a Data Product
   tags:
+    - edit
     - snowflake
-    - output-port
+    - outputport
 spec:
-  owner: agilelab
-  type: outputport
-
+  owner: agile_lab
+  useCaseTemplateId:
+    - urn:dmb:utm:snowflake-outputport-template:0.0.0
   parameters:
-    - title: Component metadata
-      description: Basic information for this component.
+    - title: Update Snowflake Output Port
+      description: | 
+        This wizard will allow you to edit the metadata for a previously created Snowflake Output Port.
+        
+        Most metadata is editable but some (like the name, domain, data product etc) are not; their fields will be read-only.
+        
+        Some of the files in the component's repository cannot be updated by this wizard, namely:
+        - **Documentation**: `README.md`, `docs/index.md`, etc
+        - **CI/CD**: `.gitlab-ci-yaml`
+        You need to take care of updating these yourself, as given their nature it's hard to do automatically and they are often edited manually after the component's creation.
+        
+    - title: Update component metadata
+      description: update basic information for this component.
       required:
-        - name
-        - domain
-        - dataproduct
         - description
-        - dependsOn
       properties:
         name:
           title: Name
           type: string
-          description: Required. The name of the component.
-          ui:field: EntityNamePicker
-          default: Snowflake Output Port
-          ui:options:
-            allowArbitraryValues: true
+          description: Not editable. The name of the component.
+          ui:disabled: true
         fullyQualifiedName:
           title: Fully Qualified Name
           type: string
@@ -42,24 +46,26 @@ spec:
         domain:
           title: Domain
           type: string
-          description: Required. Domain of the Data Product this component belongs to
+          description: Not editable. Domain of the Data Product this component belongs to
           ui:field: EntityPicker
           ui:options:
             allowArbitraryValues: false
-            allowedKinds:
+            allowedKinds: 
               - Domain
+          ui:disabled: true
         dataproduct:
           title: Data Product
           type: string
-          description: Required. Data Product this component belongs to
+          description: Not editable. Data Product this component belongs to
           ui:field: EntityPicker
           ui:filter:
             - fieldName: domain
               entityPath: spec.domain
           ui:options:
             allowArbitraryValues: false
-            allowedKinds:
+            allowedKinds: 
               - System
+          ui:disabled: true
         identifier:
           title: Identifier
           type: string
@@ -68,7 +74,7 @@ spec:
           ui:options:
             allowArbitraryValues: false
         developmentGroup:
-          title: DevelopmentGroup
+          title: Development Group
           type: string
           description: Automatically selected from the Data Product metadata. Data Product development group.
           ui:field: EntitySelectionPicker
@@ -94,10 +100,10 @@ spec:
           description: Tags for the component
           default: []
           items:
-            type: string
+            type: string  
 
 
-    - title: Output Port deployment information
+    - title: Update Output Port deployment information
       required:
         - underlyingStorage
         - tableName
@@ -135,8 +141,6 @@ spec:
         tableName:
           type: object
           ui:field: DescriptorPicker
-          ui:options:
-            allowArbitraryValues: false
           title: Table Name
           description: Choose a table from the ones defined by the Storage Area above. This is where the Output Port view will get its data.
           sourceType: field
@@ -149,8 +153,8 @@ spec:
           description: Name of the view that will be created inside the Snowflake Schema
 
 
-    - title: View Schema
-      description: Definition of the columns of the view.
+    - title: Update View Schema
+      description: Update the definition of the columns of the view.
       properties:
         schemaColumns:
           title: Column Definitions
@@ -233,10 +237,9 @@ spec:
       name: Fetch Skeleton + Template
       action: fetch:template
       input:
-        url: ./skeleton
-        targetPath: '.'
+        url: ./edit-skeleton
+        targetPath: .
         values:
-          name: '${{ parameters.name }}'
           fullyQualifiedName: '${{ parameters.fullyQualifiedName }}'
           description: '${{ parameters.description }}'
           domain: '${{ parameters.domain }}'
@@ -247,38 +250,6 @@ spec:
           tags: '${{ parameters.tags }}'
           database: '${{ parameters.database }}'
           schema: '${{ parameters.schema }}'
-          viewName: '${{parameters.viewName}}'
-          tableName: '${{parameters.tableName.value.tableName}}'
+          tableName: '${{ parameters.tableName.value.tableName }}'
+          viewName: '${{ parameters.viewName }}'
           schemaColumns: '${{ parameters.schemaColumns }}'
-          creationDate: '${{ parameters.creationDate }}'
-          useCaseTemplateId: urn:dmb:utm:snowflake-outputport-template:0.0.0
-          infrastructureTemplateId: urn:dmb:itm:snowflake-outputport-provisioner:0
-          repoUrl: 'gitlab.com?owner=AgileDMBSandbox%2F${{orgname}}%2Fmesh.repository%2F${{ parameters.domain | replace(r/domain:| |-/, "") }}%2F${{ parameters.dataproduct.split(".")[1] | replace(r/ |-/g, "") }}&repo=${{ parameters.name.split(" ") | join("") | lower }}'
-          rootDirectory: '.'
-          artifact_id: '${{ parameters.name }}'
-          useCaseTemplateVersion: 0.0.0
-
-    - id: publish
-      name: Publish
-      action: witboostMeshComponent:publish:gitlab
-      input:
-        allowedHosts: ['gitlab.com']
-        description: 'This is ${{ parameters.name }}'
-        repoUrl: 'gitlab.com?owner=AgileDMBSandbox%2F${{orgname}}%2Fmesh.repository%2F${{ parameters.domain | replace(r/domain:| |-/, "") }}%2F${{ parameters.dataproduct.split(".")[1] | replace(r/ |-/g, "") }}&repo=${{ parameters.name.split(" ") | join("") | lower }}'
-        rootDirectory: '.'
-        dataproduct: '${{ parameters.dataproduct }}'
-
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: '${{ steps.publish.output.repoContentsUrl }}'
-        catalogInfoPath: '/catalog-info.yaml'
-
-  output:
-    links:
-      - title: Repository
-        url: '${{ steps.publish.output.remoteUrl }}'
-      - title: Open in catalog
-        icon: catalog
-        entityRef: '${{ steps.register.output.entityRef }}'
