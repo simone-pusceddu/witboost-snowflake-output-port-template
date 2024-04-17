@@ -177,7 +177,7 @@ spec:
           default: None.
 
 
-    - title: Output Port deployment information
+    - title: Snowflake deployment information
       required:
         - underlyingStorage
         - tableName

@@ -34,7 +34,7 @@
 | **Confidentiality** | ${{ values.confidentiality }} |
 
 
-## Output Port deployment information
+## Snowflake deployment information
 
 | Field Name       | Value                           |
 |:-----------------|:--------------------------------|
