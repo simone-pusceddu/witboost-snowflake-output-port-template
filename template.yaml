@@ -6,6 +6,8 @@ metadata:
   description: Create a Snowflake Output Port to expose data to the Data Product consumers.
   mesh:
     icon: https://avatars.githubusercontent.com/u/6453780?s=280&v=4
+  annotations:
+    backstage.io/techdocs-ref: dir:.
   tags:
     - snowflake
     - output-port
@@ -42,7 +44,7 @@ spec:
         domain:
           title: Domain
           type: string
-          description: Required. Domain of the Data Product this component belongs to
+          description: Required. Domain of the Data Product this component belongs to.
           ui:field: EntityPicker
           ui:options:
             allowArbitraryValues: false
@@ -51,7 +53,7 @@ spec:
         dataproduct:
           title: Data Product
           type: string
-          description: Required. Data Product this component belongs to
+          description: Required. Data Product this component belongs to.
           ui:field: EntityPicker
           ui:filter:
             - fieldName: domain
@@ -68,7 +70,7 @@ spec:
           ui:options:
             allowArbitraryValues: false
         developmentGroup:
-          title: DevelopmentGroup
+          title: Development Group
           type: string
           description: Automatically selected from the Data Product metadata. Data Product development group.
           ui:field: EntitySelectionPicker
@@ -97,6 +99,84 @@ spec:
             type: string
 
 
+    - title: Terms & Conditions and SLA
+      description: Specify Terms & Conditions and Service Level Agreement information for this Output Port.
+      required:
+        - termsAndConditions
+        - intervalOfChange
+        - timeliness
+        - upTime
+      properties:
+        termsAndConditions:
+          title: Terms and Conditions
+          type: string
+          description: Required. Terms and Conditions that apply to the data.
+          default: Can be used for production purposes.
+        intervalOfChange:
+          title: Interval of change
+          type: string
+          description: Required. How often the data is refreshed.
+          default: 2BD
+        timeliness:
+          title: Timeliness
+          type: string
+          description: Required. Timeliness of the data.
+          default: 2BD
+        upTime:
+          title: Uptime
+          type: string
+          description: Required. Uptime of the Output Port.
+          default: 99.9%
+
+
+    - title: Data Sharing Agreement
+      description: Specify the Data Sharing Agreement clauses for this Data product.
+      required:
+        - purpose
+        - billing
+        - security
+        - intendedUsage
+        - limitations
+        - lifeCycle
+        - confidentiality
+      properties:
+        purpose:
+          title: Purpose
+          type: string
+          description: Required. Purpose of the data.
+          default: Foundational data for downstream sue cases.
+        billing:
+          title: Billing
+          type: string
+          description: Required. Billing applied to data usage.
+          default: None.
+        security:
+          title: Security
+          type: string
+          description: Required. Security policies that apply to the data.
+          default: Platform standard security policies.
+        intendedUsage:
+          title: Intended Usage
+          type: string
+          description: Required. Intended usage for the data.
+          default: Any downstream use cases.
+        limitations:
+          title: Limitations
+          type: string
+          description: Required. Limitations of the data.
+          default: Needs joining with other datasets (eg customer data) for most analytical use cases.
+        lifeCycle:
+          title: Lifecycle
+          type: string
+          description: Required. Lifecycle of the data.
+          default: Data loaded every two days and typically never deleted.
+        confidentiality:
+          title: Confidentiality
+          type: string
+          description: Required. Confidentiality of the data.
+          default: None.
+
+
     - title: Output Port deployment information
       required:
         - underlyingStorage
@@ -123,33 +203,45 @@ spec:
               entityPath: spec.system
             - fieldName: hiddenKind
               entityPath: spec.type
-          description: An Output Port has to get data from a Storage Area in the same Data Product
-        database:
-          title: Database
-          type: string
-          description: Name of the Database in Snowflake. If not provided, the default value (In this case, domain name) will be assigned during the creation.
-        schema:
-          title: Schema
-          type: string
-          description: Name of the Schema inside a Snowflake database. If not provided, the default value (In this case, dpname_dpversion) will be assigned during the creation.
+          description: Required. An Output Port has to get data from a Storage Area in the same Data Product.
         tableName:
           type: object
           ui:field: DescriptorPicker
           ui:options:
             allowArbitraryValues: false
           title: Table Name
-          description: Choose a table from the ones defined by the Storage Area above. This is where the Output Port view will get its data.
+          description: Required. Choose a table from the ones defined by the Storage Area above. This is where the Output Port view will get its data from.
           sourceType: field
           source: underlyingStorage
           optionsAt: spec.mesh.specific.tables
           optionsDisplayNameAt: tableName
+        database:
+          title: Database
+          type: string
+          description: Name of the database in Snowflake. If not provided, the default value (In this case, domain name) will be assigned during the creation.
+          ui:field: RegexPicker
+          validation:
+            errorMessage: The database name should contain only alphanumeric characters or "_"
+            regularExpression: ^[a-zA-Z0-9_]*$
+        schema:
+          title: Schema
+          type: string
+          description: Name of the schema inside the Snowflake database specified above. If not provided, the default value (In this case, dpname_dpversion) will be assigned during the creation.
+          ui:field: RegexPicker
+          validation:
+            errorMessage: The schema name should contain only alphanumeric characters or "_"
+            regularExpression: ^[a-zA-Z0-9_]*$
         viewName:
           title: View name
           type: string
-          description: Name of the view that will be created inside the Snowflake Schema
+          description: Required. Name of the view that will be created inside the Snowflake schema specified above.
+          ui:field: RegexPicker
+          validation:
+            errorMessage: The view name should contain only alphanumeric characters or "_"
+            regularExpression: ^[a-zA-Z0-9_]+$
 
 
-    - title: View Schema
+    - title: View schema
       description: Definition of the columns of the view.
       properties:
         schemaColumns:
@@ -196,7 +288,7 @@ spec:
                 then:
                   properties:
                     dataLength:
-                      title: Column Length
+                      title: Length
                       type: integer
                       description: Maximum length of the text
                       default: 16777216
@@ -226,6 +318,28 @@ spec:
                   required:
                     - precision
                     - scale
+              - if: true
+                then:
+                  properties:
+                    businessTerms:
+                      title: Business Terms
+                      type: array
+                      description: Multiple selection for fixed tags
+                      uniqueItems: true
+                      ui:style:
+                        minWidth: 400
+                      items:
+                        type: string
+                        enum:
+                          - Raw
+                          - Derived
+                          - Metadata
+                          - Identifier
+                          - Dimension
+                          - Fact
+                    piiCheck:
+                      title: PII
+                      type: boolean
 
 
   steps:
@@ -245,9 +359,21 @@ spec:
           developmentGroup: '${{ parameters.developmentGroup }}'
           dependsOn: '${{ parameters.dependsOn }}'
           tags: '${{ parameters.tags }}'
+          termsAndConditions: '${{ parameters.termsAndConditions }}'
+          intervalOfChange: '${{ parameters.intervalOfChange }}'
+          timeliness: '${{ parameters.timeliness }}'
+          upTime: '${{ parameters.upTime }}'
+          purpose: '${{ parameters.purpose }}'
+          billing: '${{ parameters.billing }}'
+          security: '${{ parameters.security }}'
+          intendedUsage: '${{ parameters.intendedUsage }}'
+          limitations: '${{ parameters.limitations }}'
+          lifeCycle: '${{ parameters.lifeCycle }}'
+          confidentiality: '${{ parameters.confidentiality }}'
           database: '${{ parameters.database }}'
           schema: '${{ parameters.schema }}'
           viewName: '${{parameters.viewName}}'
+          underlyingStorage: '${{parameters.underlyingStorage}}'
           tableName: '${{parameters.tableName.value.tableName}}'
           schemaColumns: '${{ parameters.schemaColumns }}'
           creationDate: '${{ parameters.creationDate }}'
@@ -257,6 +383,7 @@ spec:
           rootDirectory: '.'
           artifact_id: '${{ parameters.name }}'
           useCaseTemplateVersion: 0.0.0
+
 
     - id: publish
       name: Publish
@@ -274,6 +401,7 @@ spec:
       input:
         repoContentsUrl: '${{ steps.publish.output.repoContentsUrl }}'
         catalogInfoPath: '/catalog-info.yaml'
+
 
   output:
     links:

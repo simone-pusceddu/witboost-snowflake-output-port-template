@@ -37,7 +37,36 @@ spec:
           constraint: ${{ i.constraint }}{% endif %}{% if i.dataLength is defined and i.dataType == 'TEXT' %}
           dataLength: ${{ i.dataLength }}{% endif %}{% if i.precision is defined and i.dataType == 'NUMBER' %}
           precision: ${{ i.precision }}{% endif %}{% if i.scale is defined and i.dataType == 'NUMBER' %}
-          scale: ${{ i.scale }}{% endif %}{% endfor %}{% else %}[]{% endif %}
+          scale: ${{ i.scale }}{% endif %}
+          tags: {% if i.businessTerms | length > 0 or i.piiCheck %}
+            {% if i.businessTerms | length > 0 %}
+              {% for j in i.businessTerms %}
+            - tagFQN: ${{ j }}
+              source: Glossary
+              labelType: Manual
+              state: Confirmed
+              {% endfor %}
+            {% endif %}
+            {% if i.piiCheck %}
+            - tagFQN: PII
+              source: Tag
+              labelType: Manual
+              state: Confirmed
+            {% endif %}
+          {% else %}[]{% endif %}{% endfor %}{% else %}[]{% endif %}
+      termsAndConditions: ${{ values.termsAndConditions }}
+      SLA:
+        intervalOfChange: ${{ values.intervalOfChange }}
+        timeliness: ${{ values.timeliness }}
+        upTime: ${{ values.upTime }}
+    dataSharingAgreement:
+      purpose: ${{ values.purpose }}
+      billing: ${{ values.billing }}
+      security: ${{ values.security }}
+      intendedUsage: ${{ values.intendedUsage }}
+      limitations: ${{ values.limitations }}
+      lifeCycle: ${{ values.lifeCycle }}
+      confidentiality: ${{ values.confidentiality }}
     tags: {% if values.tags | length > 0 %}{% for i in values.tags %}
       - tagFQN: ${{ i }}
         source: Tag

@@ -100,7 +100,85 @@ spec:
           description: Tags for the component
           default: []
           items:
-            type: string  
+            type: string
+
+
+    - title: Update Terms & Conditions and SLA
+      description: Update Terms & Conditions and Service Level Agreement information for this Data product.
+      required:
+        - termsAndConditions
+        - intervalOfChange
+        - timeliness
+        - upTime
+      properties:
+        termsAndConditions:
+          title: Terms and Conditions
+          type: string
+          description: Required. Terms and Conditions that apply to the data.
+          default: Can be used for production purposes.
+        intervalOfChange:
+          title: Interval of change
+          type: string
+          description: Required. How often the data is refreshed.
+          default: 2BD
+        timeliness:
+          title: Timeliness
+          type: string
+          description: Required. Timeliness of the data.
+          default: 2BD
+        upTime:
+          title: Uptime
+          type: string
+          description: Required. Uptime of the Output Port.
+          default: 99.9%
+
+
+    - title: Update Data Sharing Agreement
+      description: Update the Data Sharing Agreement clauses for this Data product.
+      required:
+        - purpose
+        - billing
+        - security
+        - intendedUsage
+        - limitations
+        - lifeCycle
+        - confidentiality
+      properties:
+        purpose:
+          title: Purpose
+          type: string
+          description: Required. Purpose of the data.
+          default: Foundational data for downstream sue cases.
+        billing:
+          title: Billing
+          type: string
+          description: Required. Billing applied to data usage.
+          default: None.
+        security:
+          title: Security
+          type: string
+          description: Required. Security policies that apply to the data.
+          default: Platform standard security policies.
+        intendedUsage:
+          title: Intended Usage
+          type: string
+          description: Required. Intended usage for the data.
+          default: Any downstream use cases.
+        limitations:
+          title: Limitations
+          type: string
+          description: Required. Limitations of the data.
+          default: Needs joining with other datasets (eg customer data) for most analytical use cases.
+        lifeCycle:
+          title: Lifecycle
+          type: string
+          description: Required. Lifecycle of the data.
+          default: Data loaded every two days and typically never deleted.
+        confidentiality:
+          title: Confidentiality
+          type: string
+          description: Required. Confidentiality of the data.
+          default: None.
 
 
     - title: Update Output Port deployment information
@@ -134,10 +212,18 @@ spec:
           title: Database
           type: string
           description: Name of the Database in Snowflake. If not provided, the default value (In this case, domain name) will be assigned during the creation.
+          ui:field: RegexPicker
+          validation:
+            errorMessage: The database name should contain only alphabetic characters or "_"
+            regularExpression: ^[a-zA-Z_]*$
         schema:
           title: Schema
           type: string
           description: Name of the Schema inside a Snowflake database. If not provided, the default value (In this case, dpname_dpversion) will be assigned during the creation.
+          ui:field: RegexPicker
+          validation:
+            errorMessage: The schema name should contain only alphabetic characters or "_"
+            regularExpression: ^[a-zA-Z_]*$
         tableName:
           type: object
           ui:field: DescriptorPicker
@@ -151,6 +237,10 @@ spec:
           title: View name
           type: string
           description: Name of the view that will be created inside the Snowflake Schema
+          ui:field: RegexPicker
+          validation:
+            errorMessage: The view name should contain only alphabetic characters or "_"
+            regularExpression: ^[a-zA-Z_]+$
 
 
     - title: Update View Schema
@@ -230,6 +320,28 @@ spec:
                   required:
                     - precision
                     - scale
+              - if: true
+                then:
+                  properties:
+                    businessTerms:
+                      title: Business Terms
+                      type: array
+                      description: Multiple selection for fixed tags
+                      uniqueItems: true
+                      ui:style:
+                        minWidth: 400
+                      items:
+                        type: string
+                        enum:
+                          - Raw
+                          - Derived
+                          - Metadata
+                          - Identifier
+                          - Dimension
+                          - Fact
+                    piiCheck:
+                      title: PII
+                      type: boolean
 
 
   steps:
@@ -248,6 +360,17 @@ spec:
           developmentGroup: '${{ parameters.developmentGroup }}'
           dependsOn: '${{ parameters.dependsOn }}'
           tags: '${{ parameters.tags }}'
+          termsAndConditions: '${{ parameters.termsAndConditions }}'
+          intervalOfChange: '${{ parameters.intervalOfChange }}'
+          timeliness: '${{ parameters.timeliness }}'
+          upTime: '${{ parameters.upTime }}'
+          purpose: '${{ parameters.purpose }}'
+          billing: '${{ parameters.billing }}'
+          security: '${{ parameters.security }}'
+          intendedUsage: '${{ parameters.intendedUsage }}'
+          limitations: '${{ parameters.limitations }}'
+          lifeCycle: '${{ parameters.lifeCycle }}'
+          confidentiality: '${{ parameters.confidentiality }}'
           database: '${{ parameters.database }}'
           schema: '${{ parameters.schema }}'
           tableName: '${{ parameters.tableName.value.tableName }}'
