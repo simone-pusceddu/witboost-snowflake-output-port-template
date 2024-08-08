@@ -1,0 +1,48 @@
+apiVersion: witboost.com/v1
+kind: ReverseProvisioningTemplate
+metadata:
+  name: snowflake-outputport-reverse-provisioning-template.1
+  title: Snowflake Output Port
+  description: Define a Snowflake Output Port
+  tags:
+    - reverse-provisioning
+    - outputport
+    - snowflake
+spec:
+  owner: agile_lab
+  useCaseTemplateId:
+    - urn:dmb:utm:snowflake-outputport-template:0.0.0
+  parameters:
+    title: Snowflake Output Port Information
+    description: |-
+      This wizard allows you to update the Snowflake Output Port on Witboost by importing the metadata of the view.
+      Please specify the information about the view to be analyzed.
+    required:
+      - database
+      - schema
+      - viewName
+    properties:
+      database:
+        title: Database
+        type: string
+        description: Required. Name of the Database in Snowflake.
+        ui:field: EntityNamePicker
+        pattern: ^[a-zA-Z0-9_]*$
+        ui:options:
+          allowArbitraryValues: true
+      schema:
+        title: Schema
+        type: string
+        description: Required. Name of the Schema inside a Snowflake database.
+        ui:field: EntityNamePicker
+        pattern: ^[a-zA-Z0-9_]*$
+        ui:options:
+          allowArbitraryValues: true
+      viewName:
+        title: View name
+        type: string
+        description: Required. Name of the view that is present inside the Snowflake.
+        ui:field: EntityNamePicker
+        pattern: ^[a-zA-Z0-9_]*$
+        ui:options:
+          allowArbitraryValues: true
