@@ -17,13 +17,13 @@ This repository is part of our [Starter Kit](https://github.com/agile-lab-dev/wi
 
 Use this template to create an Output Port on a Snowflake instance. The Output Port is implemented as a view, pulling data from a Snowflake Storage Area, which provides the undelying tables.
 
-Refer to the [Witboost Starter Kit repository](https://github.com/agile-lab-dev/witboost-starter-kit) for information on the Specific Provisioner that can be used to deploy components created with this template.
+Refer to the [Witboost Starter Kit repository](https://github.com/agile-lab-dev/witboost-starter-kit) for information on the Tech Adapter that can be used to deploy components created with this template.
 
 ### What's a Template?
 
 A Template is a tool that helps create components inside a Data Mesh. Templates help establish a standard across the organization. This standard leads to easier understanding, management and maintenance of components. Templates provide a predefined structure so that developers don't have to start from scratch each time, which leads to faster development and allows them to focus on other aspects, such as testing and business logic.
 
-For more information, please refer to the [official documentation](https://docs.witboost.agilelab.it/docs/p1_user/p6_advanced/p6_1_templates/#getting-started).
+For more information, please refer to the [official documentation](https://docs.witboost.com/docs/p1_user/p6_advanced/p6_1_templates/#getting-started).
 
 ### What's an Output Port?
 
@@ -51,7 +51,7 @@ To get information on how to use this template, refer to this [document](./docs/
 
 To verify the component before deploying it along with the Data Product, the component needs to be tested against a CUE Policy defined for [Snowflake Output Port](./policies/output_port.cue). This policy needs to be defined inside the **Governance** section of the Witboost Platform.
 
-For more information, please refer to the [official documentation](https://docs.witboost.agilelab.it/docs/p1_user/p5_managing_policies/p5_1_overview).
+For more information, please refer to the [official documentation](https://docs.witboost.com/docs/p1_user/p5_managing_policies/p5_1_overview).
 
 ## License
 
