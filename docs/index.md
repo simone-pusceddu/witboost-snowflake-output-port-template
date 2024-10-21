@@ -157,7 +157,7 @@ To create a custom view, you simply need to provide the query needed to create i
   components:
     - id: domain:healthcare.vaccinationsdp.0.snowflake-output-port
       name: vaccinationsdp
-      fullyQualifiedName: Vaccinations Data
+      fullyQualifiedName: Healthcare - Vaccinations dp - version 0 - Vaccinations Data
       description: Vaccinations Data
       kind: outputport
       owners:

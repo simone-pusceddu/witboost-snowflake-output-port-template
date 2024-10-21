@@ -35,10 +35,6 @@ spec:
           type: string
           description: Not editable. The name of the component.
           ui:disabled: true
-        fullyQualifiedName:
-          title: Fully Qualified Name
-          type: string
-          description: Fully qualified name of the component.
         description:
           title: Description
           type: string
@@ -352,7 +348,6 @@ spec:
         url: ./edit-skeleton
         targetPath: .
         values:
-          fullyQualifiedName: '${{ parameters.fullyQualifiedName }}'
           description: '${{ parameters.description }}'
           domain: '${{ parameters.domain }}'
           dataproduct: '${{ parameters.dataproduct }}'
