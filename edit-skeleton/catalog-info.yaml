@@ -19,6 +19,7 @@ spec:
     dataContract:
       schema: {% if values.schemaColumns | length > 0 %}{% for i in values.schemaColumns %}
         - name: ${{ i.name }}
+          dataType: ${{ i.dataType }}
           {%- if i.constraint is defined and i.constraint != '(no constraint)' %}
           constraint: ${{ i.constraint }}
           {%- endif %}
