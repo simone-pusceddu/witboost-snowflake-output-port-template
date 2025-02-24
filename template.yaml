@@ -191,6 +191,131 @@ spec:
           type: string
           description: Required. Confidentiality of the data.
           default: None.
+    - title: Expectations Suite
+      properties:
+        expectationsSuite:
+          title: Define your suite of expectations
+          type: array
+          ui:ArrayFieldTemplate: ArrayTableTemplate
+          items:
+            type: object
+            ui:ObjectFieldTemplate: TableRowTemplate
+            required:
+              - expectation_type
+            properties:
+              expectation_type:
+                title: Expectation type
+                type: string
+                default: ""
+                enum:
+                  - expect_column_values_to_be_null
+                  - expect_column_values_to_not_be_null
+                  - expect_column_max_to_be_between
+                  - expect_column_min_to_be_between
+                  - expect_column_stdev_to_be_between
+                  - expect_column_values_to_be_in_set
+                  - expect_column_values_to_not_be_in_set
+                  - expect_column_values_to_match_regex
+                  - expect_column_values_to_not_match_regex
+                enumNames:
+                  - ExpectColumnValuesToBeNull
+                  - ExpectColumnValuesToNotBeNull
+                  - ExpectColumnMaxToBeBetween
+                  - ExpectColumnMinToBeBetween
+                  - ExpectColumnStdevToBeBetween
+                  - ExpectColumnValuesToBeInSet
+                  - ExpectColumnValuesToNotBeInSet
+                  - ExpectColumnValuesToMatchRegex
+                  - ExpectColumnValuesToNotMatchRegex
+            allOf:
+              - if:
+                  properties:
+                    expectation_type:
+                      oneOf:
+                        - const: expect_column_values_to_be_null
+                        - const: expect_column_values_to_not_be_null
+                then:
+                  properties:
+                    column:
+                      title: Column
+                      type: string
+                      description: The column name
+                  required:
+                    - column
+              - if:
+                  properties:
+                    expectation_type:
+                      oneOf:
+                        - const: expect_column_max_to_be_between
+                        - const: expect_column_min_to_be_between
+                        - const: expect_column_stdev_to_be_between
+                then:
+                  properties:
+                    column:
+                      title: Column
+                      type: string
+                      description: The column name
+                    min_value:
+                      title: Min value
+                      type: number
+                      description: The minimum value of the acceptable range for the column
+                    max_value:
+                      title: Max value
+                      type: number
+                      description: The maximum value of the acceptable range for the column
+                    strict_min:
+                      title: Strict min
+                      type: boolean
+                      description: If True, the lower bound of the column acceptable range must be strictly larger than min_value, default=False
+                    strict_max:
+                      title: Strict max
+                      type: boolean
+                      description: If True, the upper bound of the column acceptable range must be strictly smaller than max_value, default=False
+                  required:
+                    - column
+                    - min_value
+                    - max_value
+              - if:
+                  properties:
+                    expectation_type:
+                      oneOf:
+                        - const: expect_column_values_to_be_in_set
+                        - const: expect_column_values_to_not_be_in_set
+                then:
+                  properties:
+                    column:
+                      title: Column
+                      type: string
+                      description: The column name
+                    value_set:
+                      title: Value Set
+                      description: A set of objects used for comparison
+                      type: array
+                      minItems: 1
+                      items:
+                        type: string
+                  required:
+                    - column
+                    - value_set
+              - if:
+                  properties:
+                    expectation_type:
+                      oneOf:
+                        - const: expect_column_values_to_match_regex
+                        - const: expect_column_values_to_not_match_regex
+                then:
+                  properties:
+                    column:
+                      title: Column
+                      type: string
+                      description: The column name
+                    regex:
+                      title: Regex
+                      type: string
+                      description: The regular expression the column entries should match
+                  required:
+                    - column
+                    - regex
     - title: Snowflake deployment information
       required:
         - underlyingStorage
@@ -390,6 +515,7 @@ spec:
           limitations: ${{ parameters.limitations }}
           lifeCycle: ${{ parameters.lifeCycle }}
           confidentiality: ${{ parameters.confidentiality }}
+          expectationsSuite: ${{ parameters.expectationsSuite }}
           database: ${{ parameters.database }}
           schema: ${{ parameters.schema }}
           viewName: ${{parameters.viewName}}

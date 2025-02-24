@@ -37,6 +37,7 @@ spec:
     outputPortType: SQL
     creationDate: ${{ values.creationDate }}
     startDate: ${{ values.creationDate }}
+    __dataContractEnabled: true
     dataContract:
       schema: {% if values.schemaColumns | length > 0 %}{% for i in values.schemaColumns %}
         - name: ${{ i.name }}
@@ -74,6 +75,37 @@ spec:
         intervalOfChange: ${{ values.intervalOfChange }}
         timeliness: ${{ values.timeliness }}
         upTime: ${{ values.upTime }}
+      quality: {% if values.expectationsSuite | length > 0 %}{% for i in values.expectationsSuite %}
+        - type: custom
+          engine: greatExpectations
+          implementation:
+            type: ${{ i.expectation_type }}
+            args:
+              {%- if i.column is defined %}
+              column: ${{ i.column }}
+              {%- endif %}
+              {%- if i.min_value is defined %}
+              min_value: ${{ i.min_value }}
+              {%- endif %}
+              {%- if i.max_value is defined %}
+              max_value: ${{ i.max_value }}
+              {%- endif %}
+              {%- if i.strict_min is defined %}
+              strict_min: ${{ i.strict_min }}
+              {%- endif %}
+              {%- if i.strict_max is defined %}
+              strict_max: ${{ i.strict_max }}
+              {%- endif %}
+              {%- if i.value_set is defined and not i.value_set is string and i.value_set | length > 0 and i.value_set | first | length > 0 %}
+              value_set:
+                {%- for j in i.value_set %}
+                - '${{ j }}'
+                {%- endfor %}
+              {%- endif %}
+              {%- if i.regex is defined %}
+              regex: '${{ i.regex | safe }}'
+              {%- endif %}
+        {% endfor %}{% else %}[]{% endif %}
     dataSharingAgreement:
       purpose: ${{ values.purpose }}
       billing: ${{ values.billing }}
